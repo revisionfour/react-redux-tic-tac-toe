@@ -1,0 +1,172 @@
+body{
+	background-color: #EEE;
+}
+
+#winner-bar{
+	position: relative;
+
+	width: 340px;
+	height: 10px;
+
+	background-color: #000;
+
+	opacity: 0.6;
+
+	display: none;
+}
+
+
+#winner-bar.cross1{
+	top: 170px;
+	left: 0px;
+	transform: rotate(225deg);
+
+	display: block;
+}
+
+#winner-bar.cross2{
+	top: 170px;
+	left: 0px;
+	transform: rotate(135deg);
+
+	display: block;
+}
+
+#winner-bar.horizontal1{
+	top: 50px;
+	left: 0px;
+	transform: rotate(0deg);
+
+	display: block;
+}
+
+#winner-bar.horizontal2{
+	top: 165px;
+	left: 0px;
+	transform: rotate(0deg);
+
+	display: block;
+}
+
+#winner-bar.horizontal3{
+	top: 150px;
+	left: 0px;
+	transform: rotate(0deg);
+
+	display: block;
+}
+
+
+#winner-bar.vertical1{
+	top: 165px;
+	left: -110px;
+	transform: rotate(90deg);
+
+	display: block;
+}
+
+#winner-bar.vertical2{
+	top: 165px;
+	left: 0px;
+	transform: rotate(90deg);
+
+	display: block;
+}
+
+#winner-bar.vertical3{
+	top: 165px;
+	left: 110px;
+	transform: rotate(90deg);
+
+	display: block;
+}
+
+
+#gameboard{
+	margin-top: 20px;
+
+	margin-left: auto;
+	margin-right: auto;
+
+	width: 340px;
+	height: 340px;
+
+	background-image: url(/img/tic-tac-toe-grid.png);
+}
+
+.cell{
+	float: left;
+	margin-left: 10px;
+	margin-top: 10px;
+
+	width: 100px;
+	height: 100px;
+	line-height: 100px;
+
+	font-weight: bold;
+	font-size: 60px;
+	font-family: Arial;
+	color: #000;
+	text-align: center;
+
+	border-radius: 10px;
+}
+
+.hidden-hover{
+	visibility: hidden;
+}
+
+.cell:hover .hidden-hover{
+	cursor: pointer;
+
+	visibility: visible;
+	color: rgba(215,215,215,0.8);
+}
+
+#results{
+	margin-top: 30px;
+	margin-bottom: 30px;
+
+	height: 30px;
+	line-height: 30px;
+	font-size: 30px;
+}
+
+#tic-tac-toe{
+	margin-top: 40px;
+	height: 60px;
+	line-height: 60px;
+
+	font-size: 60px;
+	font-weight: bold;
+
+	text-align: center;
+}
+
+#clear-button{
+	display: block;
+
+	margin-top: 60px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#current-player{
+	font-size: 60px;
+	font-weight: bold;
+}
+
+#cover{
+	display: none;
+
+	position: relative;
+	width: 100%;
+	height: 100%;
+}
+
+.show + #cover{
+	display: block;
+}
+
+
+
