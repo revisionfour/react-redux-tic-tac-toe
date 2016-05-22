@@ -4,6 +4,14 @@ React, Redux tic tac toe game
 
 Works beautifully
 
-### Live Example
+### To start
+
+**On the command line**
+	
+```
+	npm start
+```
+
+### Animated Example
 
 ![](tic-tac-toeRunning.gif)
