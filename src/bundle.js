@@ -68,7 +68,7 @@
 		_reactRedux.Provider,
 		{ store: _store.store },
 		_react2.default.createElement(_App2.default, null)
-	), document.getElementById('app'));
+	), document.querySelector('.container'));
 
 	// These 2 imports are needed for the store
 
@@ -21745,7 +21745,11 @@
 
 	var _reactRedux = __webpack_require__(166);
 
-	var _Board = __webpack_require__(193);
+	var _redux = __webpack_require__(173);
+
+	var _index = __webpack_require__(193);
+
+	var _Board = __webpack_require__(194);
 
 	var _Board2 = _interopRequireDefault(_Board);
 
@@ -21767,9 +21771,47 @@
 		}
 
 		_createClass(App, [{
+			key: 'clearBoard',
+			value: function clearBoard() {
+				this.props.clearBoard();
+				this.props.setMessage({
+					message: ''
+				});
+				this.props.setBar({ className: '' });
+			}
+		}, {
 			key: 'render',
 			value: function render() {
-				return _react2.default.createElement(_Board2.default, { board: board, currentPlayer: currentPlayer });
+				return _react2.default.createElement(
+					'div',
+					null,
+					_react2.default.createElement(
+						'div',
+						{ id: 'tic-tac-toe' },
+						'Tic Tac Toe'
+					),
+					_react2.default.createElement(
+						'div',
+						{ id: 'results', className: 'text-center' },
+						this.props.message
+					),
+					_react2.default.createElement(_Board2.default, { board: this.props.board, currentPlayer: this.props.currentPlayer, currentClass: this.props.currentClass }),
+					_react2.default.createElement(
+						'h1',
+						{ className: 'text-center' },
+						'Current Player'
+					),
+					_react2.default.createElement(
+						'div',
+						{ id: 'current-player', className: 'text-center' },
+						this.props.currentPlayer
+					),
+					_react2.default.createElement(
+						'button',
+						{ id: 'clear-button', className: 'btn btn-danger', onClick: this.clearBoard.bind(this) },
+						'Reset Game'
+					)
+				);
 			}
 		}]);
 
@@ -21779,16 +21821,64 @@
 	function mapStateToProps(state) {
 		return {
 			board: state.Board.board,
-			currentPlayer: state.Board.currentPlayer
+			currentPlayer: state.Board.currentPlayer,
+			message: state.Message.message,
+			currentClass: state.Message.className
 		};
 	}
 
-	// export default App;
+	function mapDispatchToProps(dispatch) {
+		return (0, _redux.bindActionCreators)({ clearBoard: _index.clearBoard, setMessage: _index.setMessage, setBar: _index.setBar }, dispatch);
+	}
 
-	exports.default = (0, _reactRedux.connect)(mapStateToProps)(App);
+	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(App);
 
 /***/ },
 /* 193 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports.setPlay = setPlay;
+	exports.clearBoard = clearBoard;
+	exports.setMessage = setMessage;
+	exports.setBar = setBar;
+	var SET_PLAY = exports.SET_PLAY = 'SET_PLAY';
+
+	function setPlay(action) {
+		return {
+			type: SET_PLAY,
+			// index:
+			board: action.board,
+			currentPlayer: action.currentPlayer
+		};
+	}
+
+	function clearBoard() {
+		return {
+			type: 'CLEAR_BOARD'
+		};
+	}
+
+	function setMessage(action) {
+		return {
+			type: 'SET_MESSAGE',
+			message: action.message
+		};
+	}
+
+	function setBar(action) {
+		return {
+			type: 'SET_BAR',
+			className: action.className
+		};
+	}
+
+/***/ },
+/* 194 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21807,7 +21897,7 @@
 
 	var _redux = __webpack_require__(173);
 
-	var _index = __webpack_require__(194);
+	var _index = __webpack_require__(193);
 
 	var _lodash = __webpack_require__(195);
 
@@ -21835,12 +21925,6 @@
 	  function Board() {
 	    _classCallCheck(this, Board);
 
-	    /*this.state = {
-	      currentPlayer: 'X',
-	      boardState:['','','','','','','','','']
-	    };
-	    */
-
 	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Board).call(this));
 
 	    _this.changeBoard = _this.changeBoard.bind(_this);
@@ -21855,44 +21939,66 @@
 	      }
 
 	      var newBoard = _lodash2.default.cloneDeep(this.props.board);
-
 	      var currentPlayer = this.props.currentPlayer;
 
 	      newBoard[index] = currentPlayer;
-
-	      /*this.setState({
-	        currentPlayer: this.props.currentPlayer == 'X' ? 'O' : 'X',
-	        boardState: newBoard
-	      });
-	      */
 
 	      this.props.setPlay({
 	        board: newBoard,
 	        currentPlayer: this.props.currentPlayer == 'X' ? 'O' : 'X'
 	      });
 
-	      this.checkWinner(this.props.currentPlayer, newBoard);
+	      this.checkWinner(currentPlayer, newBoard);
 	    }
 	  }, {
 	    key: 'checkCross',
 	    value: function checkCross(checkPlayer, currentBoard) {
-	      if (currentBoard[0] == checkPlayer && currentBoard[4] == checkPlayer && currentBoard[8] == checkPlayer || currentBoard[2] == checkPlayer && currentBoard[4] == checkPlayer && currentBoard[6] == checkPlayer) {
+	      if (currentBoard[0] == checkPlayer && currentBoard[4] == checkPlayer && currentBoard[8] == checkPlayer) {
+	        this.props.setBar({ className: 'cross1' });
+	        return true;
+	      } else if (currentBoard[2] == checkPlayer && currentBoard[4] == checkPlayer && currentBoard[6] == checkPlayer) {
+	        this.props.setBar({ className: 'cross2' });
 	        return true;
 	      }
 	      return false;
 	    }
 	  }, {
+	    key: 'checkDraw',
+	    value: function checkDraw(currentBoard) {
+	      for (var i = 0; i < currentBoard.length; i++) {
+	        if (currentBoard[i] == '') {
+	          return false;
+	        }
+	      }
+	      return true;
+	    }
+	  }, {
 	    key: 'checkHorizontal',
 	    value: function checkHorizontal(checkPlayer, currentBoard) {
-	      if (currentBoard[0] == checkPlayer && currentBoard[1] == checkPlayer && currentBoard[2] == checkPlayer || currentBoard[3] == checkPlayer && currentBoard[4] == checkPlayer && currentBoard[5] == checkPlayer || currentBoard[6] == checkPlayer && currentBoard[7] == checkPlayer && currentBoard[8] == checkPlayer) {
+	      if (currentBoard[0] == checkPlayer && currentBoard[1] == checkPlayer && currentBoard[2] == checkPlayer) {
+	        this.props.setBar({ className: 'horizontal1' });
+	        return true;
+	      } else if (currentBoard[3] == checkPlayer && currentBoard[4] == checkPlayer && currentBoard[5] == checkPlayer) {
+	        this.props.setBar({ className: 'horizontal2' });
+	        return true;
+	      } else if (currentBoard[6] == checkPlayer && currentBoard[7] == checkPlayer && currentBoard[8] == checkPlayer) {
+	        this.props.setBar({ className: 'horizontal3' });
 	        return true;
 	      }
+
 	      return false;
 	    }
 	  }, {
 	    key: 'checkVertical',
 	    value: function checkVertical(checkPlayer, currentBoard) {
-	      if (currentBoard[0] == checkPlayer && currentBoard[3] == checkPlayer && currentBoard[6] == checkPlayer || currentBoard[1] == checkPlayer && currentBoard[4] == checkPlayer && currentBoard[7] == checkPlayer || currentBoard[2] == checkPlayer && currentBoard[5] == checkPlayer && currentBoard[8] == checkPlayer) {
+	      if (currentBoard[0] == checkPlayer && currentBoard[3] == checkPlayer && currentBoard[6] == checkPlayer) {
+	        this.props.setBar({ className: 'vertical1' });
+	        return true;
+	      } else if (currentBoard[1] == checkPlayer && currentBoard[4] == checkPlayer && currentBoard[7] == checkPlayer) {
+	        this.props.setBar({ className: 'vertical2' });
+	        return true;
+	      } else if (currentBoard[2] == checkPlayer && currentBoard[5] == checkPlayer && currentBoard[8] == checkPlayer) {
+	        this.props.setBar({ className: 'vertical3' });
 	        return true;
 	      }
 	      return false;
@@ -21900,23 +22006,18 @@
 	  }, {
 	    key: 'checkWinner',
 	    value: function checkWinner(currentPlayer, currentBoard) {
-
 	      if (this.checkHorizontal(currentPlayer, currentBoard) || this.checkVertical(currentPlayer, currentBoard) || this.checkCross(currentPlayer, currentBoard)) {
-	        alert(currentPlayer + ' has won!!!');
-	        this.clearBoard();
-	      } else {
-	        console.log('Didnt win yet!');
+	        this.clearBoard(currentPlayer + ' has won!');
+	      } else if (this.checkDraw(currentBoard)) {
+	        this.clearBoard('Game is a draw!');
 	      }
 	    }
 	  }, {
 	    key: 'clearBoard',
-	    value: function clearBoard() {
-	      /*this.setState({
-	        boardState:['','','','','','','','','']
-	      })*/
-
-	      // huh?
-	      this.props.clearBoard();
+	    value: function clearBoard(message) {
+	      this.props.setMessage({
+	        message: message
+	      });
 	    }
 	  }, {
 	    key: 'render',
@@ -21929,8 +22030,10 @@
 	        'div',
 	        { id: 'gameboard' },
 	        this.props.board.map(function (cellVal, i) {
-	          return _react2.default.createElement(_Cell2.default, { key: i, keyVal: i, value: cellVal, changeBoard: self.changeBoard });
-	        })
+	          return _react2.default.createElement(_Cell2.default, { key: i, keyVal: i, value: cellVal, changeBoard: self.changeBoard, currentPlayer: self.props.currentPlayer });
+	        }),
+	        _react2.default.createElement('div', { id: 'winner-bar', className: this.props.currentClass }),
+	        _react2.default.createElement('div', { id: 'cover' })
 	      );
 	    }
 	  }]);
@@ -21938,65 +22041,11 @@
 	  return Board;
 	}(_react2.default.Component);
 
-	// export default Board;
-
-	function mapDisPatchToProps(dispatch) {
-	  return (0, _redux.bindActionCreators)({ setPlay: _index.setPlay, clearBoard: _index.clearBoard }, dispatch);
+	function mapDispatchToProps(dispatch) {
+	  return (0, _redux.bindActionCreators)({ setPlay: _index.setPlay, clearBoard: _index.clearBoard, setMessage: _index.setMessage, setBar: _index.setBar }, dispatch);
 	}
 
-	exports.default = (0, _reactRedux.connect)(null, mapDisPatchToProps)(Board);
-
-	/*
-	function mapStateToProps(state) {
-	  return {
-	    boardState: state.Board.board
-	  }
-	}
-	*/
-
-	// function mapDispatchToProps(dispatch)
-
-/***/ },
-/* 194 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	exports.setPlay = setPlay;
-	exports.clearBoard = clearBoard;
-	// {
-	// 	currentPlayer: 'X',
-	//   boardState:['','','','','','','','','']
-
-	// }
-
-	// export const setPlay = (index, player) => {
-	// 	return {
-	// 		type: 'SET_PLAY',
-	// 		index,
-	// 		player
-	// 	}
-	// }
-
-	var SET_PLAY = exports.SET_PLAY = 'SET_PLAY';
-
-	function setPlay(action) {
-		return {
-			type: SET_PLAY,
-			// index:
-			board: action.board,
-			currentPlayer: action.currentPlayer
-		};
-	}
-
-	function clearBoard() {
-		return {
-			type: 'CLEAR_BOARD'
-		};
-	}
+	exports.default = (0, _reactRedux.connect)(null, mapDispatchToProps)(Board);
 
 /***/ },
 /* 195 */
@@ -38202,29 +38251,38 @@
 		function Cell() {
 			_classCallCheck(this, Cell);
 
-			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Cell).call(this));
-
-			_this.handleClick = _this.handleClick.bind(_this);
-			return _this;
+			return _possibleConstructorReturn(this, Object.getPrototypeOf(Cell).apply(this, arguments));
 		}
 
 		_createClass(Cell, [{
 			key: 'handleClick',
-			value: function handleClick(e) {
-				// alert('This is the id -> ' + e.target.id);
-
-				this.props.changeBoard(e.target.id.replace(/cell/, ''));
-				// this.props.setPlay(e.target.id.replace(/cell/,''));
+			value: function handleClick(val) {
+				this.props.changeBoard(val);
 			}
 		}, {
 			key: 'render',
 			value: function render() {
-				console.log('');
+				console.log('Rendering Cell');
+				var insideText;
+				var className = "";
+
+				var self = this;
+
+				if (this.props.value) {
+					insideText = this.props.value;
+				} else {
+					insideText = this.props.currentPlayer;
+					className = "hidden-hover";
+				}
 
 				return _react2.default.createElement(
 					'div',
-					{ className: 'cell', id: 'cell' + this.props.keyVal, onClick: this.handleClick },
-					this.props.value
+					{ className: 'cell' },
+					_react2.default.createElement(
+						'div',
+						{ onClick: this.handleClick.bind(this, self.props.keyVal), className: className },
+						insideText
+					)
 				);
 			}
 		}]);
@@ -38233,16 +38291,6 @@
 	}(_react2.default.Component);
 
 	exports.default = Cell;
-
-	/*
-
-	function mapDispatchToProps(dispatch){
-		return bindActionCreators({setPlay: setPlay}, dispatch);
-	}
-
-	export default connect(null, mapDispatchToProps)(Cell);
-
-	*/
 
 /***/ },
 /* 198 */
@@ -38351,20 +38399,70 @@
 
 	'use strict';
 
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
 	var _redux = __webpack_require__(173);
 
 	var _reducerBoard = __webpack_require__(201);
 
 	var _reducerBoard2 = _interopRequireDefault(_reducerBoard);
 
+	var _reducerMessage = __webpack_require__(202);
+
+	var _reducerMessage2 = _interopRequireDefault(_reducerMessage);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var rootReducer = (0, _redux.combineReducers)({
-		Board: _reducerBoard2.default
+		Board: _reducerBoard2.default,
+		Message: _reducerMessage2.default
 	});
+
+	exports.default = rootReducer;
 
 /***/ },
 /* 201 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	exports.default = function () {
+		var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
+		var action = arguments[1];
+
+		switch (action.type) {
+			case _index.SET_PLAY:
+				return {
+					id: action.index,
+					board: action.board,
+					currentPlayer: action.currentPlayer
+				};
+			case 'CLEAR_BOARD':
+				return {
+					board: ['', '', '', '', '', '', '', '', ''],
+					currentPlayer: 'X'
+				};
+			default:
+				return state;
+		}
+	};
+
+	var _index = __webpack_require__(193);
+
+	var initialState = {
+		board: ['', '', '', '', '', '', '', '', ''],
+		currentPlayer: 'X',
+		message: ''
+	};
+
+/***/ },
+/* 202 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -38378,30 +38476,24 @@
 		var action = arguments[1];
 
 		switch (action.type) {
-			case 'SET_PLAY':
+			case 'SET_BAR':
 				return {
-					id: action.index,
-					board: action.board,
-					currentPlayer: action.currentPlayer === 'O' ? 'X' : 'O'
+					className: action.className ? action.className + ' show' : action.className,
+					message: state.message
 				};
-			case 'CLEAR_BOARD':
+			case 'SET_MESSAGE':
 				return {
-					board: [],
-					currentPlayer: 'X'
+					className: state.className,
+					message: action.message
 				};
 			default:
 				return state;
 		}
 	};
 
-	// import { combineReducers } from 'redux'
-
-	// const ticTacToeApp = combineReducers({
-
-	// });
 	var initialState = {
-		board: ['', '', '', '', '', '', '', '', ''],
-		currentPlayer: 'X'
+		message: '',
+		className: ''
 	};
 
 /***/ }

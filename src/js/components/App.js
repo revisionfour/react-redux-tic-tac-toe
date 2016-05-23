@@ -15,7 +15,6 @@ class App extends React.Component {
 			message:''
 		});
 		this.props.setBar({className:''});
-
 	}
 
 	render(){
